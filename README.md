@@ -1,7 +1,11 @@
 # Schoolsoft API
 
-Usage:
-Create .env file in root and use this template:
+Python API wrapper for undocumented Schoolsoft REST API
+
+## Usage
+
+Create `.env` file in root and use this template:
+
 ```
 USER = user.name
 PASS = mypassword
