@@ -1,0 +1,46 @@
+Method: GET
+Resposne Type: raw json data
+
+Example respone:
+[
+  {
+    "eventId": 123456,
+    "name": "Lesson Name",
+    "description": "Lesson Description",
+    "startDate": "2025-01-13T12:40",
+    "endDate": "2025-01-13T13:00",
+    "allDay": false,
+    "eventColor": "#659a52",
+    "editable": false,
+    "room": "200",
+    "teachingGroup": "Grade 3",
+    "teacher": "John Doe",
+    "dayId": 0,
+    "status": -1,
+    "category": "lesson",
+    "roomBooking": false
+  }
+]
+
+Breakdown of keys and values:
+eventId - lesson ID in other words
+name - name of lesson
+description - description of lesson
+startDate - when the lesson starts in UTC time
+endDate - when the lesson ends in UTC time
+allDay - ?
+eventColor - lesson color in schoolsoft schedule
+editable - if you are allowed to edit the lesson's data
+room - where the lesson takes place
+teachingGroup - what class/grade this lesson applies to
+teacher - what teacher(s) hold this lesson
+dayId - index from 0 to 4
+  0: Monday
+  1: Tuesday
+  2: Wednesday
+  3: Thursday
+  4: Friday
+  
+status - ?
+category - ?
+roomBooking - ?

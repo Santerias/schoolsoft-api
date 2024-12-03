@@ -2,8 +2,8 @@
 import requests
 import json
 import time
-import datetime
 import os
+from datetime import datetime
 from sys import exit
 from urllib.parse import urlparse, parse_qs, quote
 from dotenv import load_dotenv
@@ -231,6 +231,26 @@ class Api:
     def get_localization_text(self, key_text: str) -> dict:
         return self.session.get(f"{self.rest_url}/localization/texts/?keyText={key_text}").json()
 
+    # Useful functions
+    def get_previous_lesson(self, pretty_print: bool = False) -> list | str:
+        now = datetime.now()
+        lessons = self.get_calendar_student_lessons()
+        lessons.sort(key=lambda x: datetime.fromisoformat(x["startDate"]))
+        previous_lesson = None
+        
+        for lesson in lessons:
+            start_date = datetime.fromisoformat(lesson["startDate"])
+            end_date = datetime.fromisoformat(lesson["endDate"])
+            if end_date < now:
+                previous_lesson = lesson
+            else:
+                break
+        
+        if pretty_print:
+            return f"{previous_lesson["name"]} in room {previous_lesson["room"]} with {previous_lesson["teacher"]} at {previous_lesson["startDate"]} to {previous_lesson["endDate"]}"    
+        else:
+            return previous_lesson
+            
 
 if __name__ == "__main__":
     load_dotenv()
@@ -240,4 +260,5 @@ if __name__ == "__main__":
     school = os.getenv("SCHOOL")
 
     api = Api(username, password, school)
-    print(api.get_session())
+    # print(api.get_previous_lesson(pretty_print=True))
+    print(api.get_previous_lesson())
