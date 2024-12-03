@@ -232,7 +232,12 @@ class Api:
         return self.session.get(f"{self.rest_url}/localization/texts/?keyText={key_text}").json()
 
     # Useful functions
-    def get_previous_lesson(self, pretty_print: bool = False) -> list | str:
+    def get_previous_lesson(self, pretty_print: bool = False) -> dict | str:
+        """
+        Returns authenticated user's previous lesson as a dict, but can also return
+        pretty printed str with minimal information
+        """
+                
         now = datetime.now()
         lessons = self.get_calendar_student_lessons()
         lessons.sort(key=lambda x: datetime.fromisoformat(x["startDate"]))
