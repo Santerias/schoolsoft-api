@@ -256,6 +256,32 @@ class Api:
         else:
             return previous_lesson
             
+        
+    def get_current_lesson(self, pretty_print: bool = False) -> dict | str:
+        now = datetime.now()
+        lessons = self.get_calendar_student_lessons()
+        for lesson in lessons:
+            start_date = datetime.fromisoformat(lesson["startDate"])
+            end_date = datetime.fromisoformat(lesson["endDate"])
+            if start_date <= now <= end_date:
+                if pretty_print:
+                    return f"{lesson["name"]} in room {lesson["room"]} with {lesson["teacher"]} at {lesson["startDate"]} to {lesson["endDate"]}"
+                else:
+                    return lesson
+        return None
+
+    def get_next_lesson(self, pretty_print: bool = False) -> dict | str:
+        now = datetime.now()
+        lessons = self.get_calendar_student_lessons()
+        lessons.sort(key=lambda x: datetime.fromisoformat(x["startDate"]))
+        for lesson in lessons:
+            start_date = datetime.fromisoformat(lesson["startDate"])
+            if start_date > now:
+                if pretty_print:
+                    return f"{lesson["name"]} in room {lesson["room"]} with {lesson["teacher"]} at {lesson["startDate"]} to {lesson["endDate"]}"
+                else:
+                    return lesson
+        return None
 
 if __name__ == "__main__":
     load_dotenv()
@@ -265,5 +291,3 @@ if __name__ == "__main__":
     school = os.getenv("SCHOOL")
 
     api = Api(username, password, school)
-    # print(api.get_previous_lesson(pretty_print=True))
-    print(api.get_previous_lesson())
