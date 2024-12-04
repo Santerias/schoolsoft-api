@@ -2,7 +2,7 @@ import json
 from datetime import datetime, timedelta
 
 # Change path to your json file containing your lessons data
-with open("test_lesson_data.json", "r") as f:
+with open("test_lesson_data.json", "r", encoding="UTF-8") as f:
     data = json.load(f)
 
 def get_current_lesson(lessons):
@@ -54,4 +54,4 @@ print(f"\nToday's lessons: {get_todays_lessons(data)}")
 
 print("\nToday's lessons (pretty printed):")
 for lesson in get_todays_lessons(data):
-    print(f"{lesson["name"]} at {lesson["startDate"]} to {lesson["endDate"]}\n", )
+    print(f"{lesson["name"]} at {lesson["startDate"]} to {lesson["endDate"]}\n")
