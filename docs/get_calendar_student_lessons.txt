@@ -44,3 +44,11 @@ dayId - index from 0 to 4
 status - ?
 category - ?
 roomBooking - ?
+
+
+------------------------------------------------------
+
+Method: GET
+Endpoint: https://sms.schoolsoft.se/nti/rest-api/calendar/student/lessons/class/[class_id]
+The class_id is just a 5 character long int
+
