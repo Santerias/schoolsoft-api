@@ -231,7 +231,7 @@ class Api:
     def get_localization_text(self, key_text: str) -> dict:
         return self.session.get(f"{self.rest_url}/localization/texts/?keyText={key_text}").json()
 
-    # Useful functions
+    # Get previous, current, and next lesson functions
     def get_previous_lesson(self, pretty_print: bool = False) -> dict | str:
         """
         Returns authenticated user's previous lesson as a dict, but can also return
@@ -282,6 +282,16 @@ class Api:
                 else:
                     return lesson
         return None
+    
+    def get_todays_lessons(self) -> list:
+        now = datetime.now().date()
+        lessons = self.get_calendar_student_lessons()
+        todays_lessons = [
+            lesson for lesson in lessons
+            if datetime.fromisoformat(lesson["startDate"]).date() == now
+        ]
+        todays_lessons.sort(key=lambda x: datetime.fromisoformat(x["startDate"]))
+        return todays_lessons
 
 if __name__ == "__main__":
     load_dotenv()
