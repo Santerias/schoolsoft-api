@@ -1,0 +1,14 @@
+Method: GET
+Endpoint: https://sms.schoolsoft.se/nti/jsp/student/right_student_lesson_status_ajax.jsp?week=[week_number]&lesson=[lesson_id]&_=[current_time_unixtimestamp]
+
+This endpoint allows you to get lesson status for a specific lesson if you have lesson id and week number
+and it also takes _ parameter and it's just a unixtimestamp that is always set to the current time
+
+Example Response:
+LESSON NAME
+Måndag  08:30-10:00
+Närvarande
+
+Lektionen är genomförd
+Rapporterad av TEACHER NAME
+
