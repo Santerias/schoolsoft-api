@@ -41,7 +41,7 @@ dayId - index from 0 to 4
   3: Thursday
   4: Friday
   
-status - ?
+status - 3 means inställd/cancelled
 category - ?
 roomBooking - ?
 
