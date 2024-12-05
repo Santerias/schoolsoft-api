@@ -41,7 +41,13 @@ dayId - index from 0 to 4
   3: Thursday
   4: Friday
   
-status - 3 means inställd/cancelled
+status - 
+NOTE: Not sure if any of this is correct needs a lot of trial and error
+3 means inställd/cancelled
+-1 means no attendance has been taken by teacher (orapporterad)
+2 means attendance has been taken doesnt matter if you was there or not there
+
+
 category - ?
 roomBooking - ?
 
