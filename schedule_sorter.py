@@ -47,7 +47,6 @@ def get_todays_lessons(lessons):
     return todays_lessons
 
 def get_lesson_status(lessons, lessonId, week):
-    now = datetime.now().timestamp()
     lessons.sort(key=lambda x: datetime.fromisoformat(x["startDate"]))
     for lesson in lessons:
         if "studentLessonStatus" in lesson:
@@ -56,6 +55,30 @@ def get_lesson_status(lessons, lessonId, week):
                 return f"Lesson ID: {student_status["lessonId"]}\nWeek: {student_status["week"]}\nComment: {student_status["comment"]}\nAbsence: {student_status["absence"]}\nAttendance: {student_status["name"]}\nReason: {student_status["reason"]}\n"
     return None
 
+def get_lessons_by_id(lessons, lessonId):
+    lessons.sort(key=lambda x: datetime.fromisoformat(x["startDate"]))
+    results = []
+    for lesson in lessons:
+        if lesson["eventId"] == lessonId:
+            results.append(lesson)
+    return results
+
+def get_lessons_by_name(lessons, lessonName):
+    lessons.sort(key=lambda x: datetime.fromisoformat(x["startDate"]))
+    results = []
+    for lesson in lessons:
+        if lessonName in lesson["name"]:
+            results.append(lesson)
+    return results
+
+def get_event_id_by_name(lessons, lessonName):
+    lessons.sort(key=lambda x: datetime.fromisoformat(x["startDate"]))
+    results = []
+    for lesson in lessons:
+        if lessonName in lesson["name"]:
+            if lesson["eventId"] not in results:
+                results.append(lesson["eventId"])
+    return results
 
 print(f"Previous Lesson: {get_previous_lesson(data)}")
 print(f"Current Lesson: {get_current_lesson(data)}")
@@ -64,7 +87,29 @@ print(f"\nToday's lessons: {get_todays_lessons(data)}")
 
 print("\nToday's lessons (pretty printed):")
 for lesson in get_todays_lessons(data):
-    print(f"{lesson["name"]} at {lesson["startDate"]} to {lesson["endDate"]}\n")
+    print(f"{lesson["name"]} at {lesson["startDate"]} to {lesson["endDate"]}")
 
-print("Status for GYAREE:\n")
+print("Status for GYAREE:")
 print(get_lesson_status(data, 379377, 35))
+
+eventId = 379418
+
+print(f"\nResults for eventId {eventId}:")
+amt_lessons1 = get_lessons_by_id(data, eventId)
+for lesson in amt_lessons1:
+    print(f"{lesson["name"]}: {lesson["startDate"]} - {lesson["endDate"]}")
+
+print(f"\nThere are {len(amt_lessons1)} lessons with eventId {eventId}")
+
+lessonName = "NAKNAK01a"
+
+print(f"\nResults for lesson name: {lessonName}:")
+amt_lessons2 = get_lessons_by_name(data, lessonName)
+for lesson in amt_lessons2:
+    print(f"{lesson["name"]}: {lesson["startDate"]} - {lesson["endDate"]}")
+
+print(f"\nThere are {len(amt_lessons2)} lessons with the lesson name {lessonName}")
+
+lessonName = "NAKNAK01a"
+print(f"\nEvent ID(s) for {lessonName}:")
+print(get_event_id_by_name(data, lessonName))
