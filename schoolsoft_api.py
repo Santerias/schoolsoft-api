@@ -293,6 +293,16 @@ class Api:
         todays_lessons.sort(key=lambda x: datetime.fromisoformat(x["startDate"]))
         return todays_lessons
 
+    def get_lesson_status(self, lesson_id: int, week: int):
+        lessons = self.get_calendar_student_lessons()
+        lessons.sort(key=lambda x: datetime.fromisoformat(x["startDate"]))
+        for lesson in lessons:
+            if "studentLessonStatus" in lesson:
+                student_status = lesson["studentLessonStatus"]
+                if student_status["week"] == week and student_status["lessonId"] == lesson_id:
+                    return lesson
+        return None
+
 if __name__ == "__main__":
     load_dotenv()
 
