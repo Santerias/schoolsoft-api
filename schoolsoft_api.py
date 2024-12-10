@@ -302,6 +302,34 @@ class Api:
                 if student_status["week"] == week and student_status["lessonId"] == lesson_id:
                     return lesson
         return None
+    
+    def get_lessons_by_id(self, lesson_id: int):
+        lessons = self.get_calendar_student_lessons()
+        lessons.sort(key=lambda x: datetime.fromisoformat(x["startDate"]))
+        results = []
+        for lesson in lessons:
+            if lesson["eventId"] == lesson_id:
+                results.append(lesson)
+        return results
+
+    def get_lessons_by_name(self, lesson_name: str):
+        lessons = self.get_calendar_student_lessons()
+        lessons.sort(key=lambda x: datetime.fromisoformat(x["startDate"]))
+        results = []
+        for lesson in lessons:
+            if lesson_name in lesson["name"]:
+                results.append(lesson)
+        return results
+    
+    def get_event_id_by_name(self, lesson_name: str):
+        lessons = self.get_calendar_student_lessons()
+        lessons.sort(key=lambda x: datetime.fromisoformat(x["startDate"]))
+        results = []
+        for lesson in lessons:
+            if lesson_name in lesson["name"]:
+                if lesson["eventId"] not in results:
+                    results.append(lesson["eventId"])
+        return results
 
 if __name__ == "__main__":
     load_dotenv()
