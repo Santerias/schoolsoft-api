@@ -229,7 +229,7 @@ class Api:
                 results.append(lesson)
         return results
 
-    def get_lessons_by_name(self, lesson_name: str):
+    def get_lessons_by_name(self, lesson_name: str) -> list[dict]:
         lessons = self.get_calendar_student_lessons()
         lessons.sort(key=lambda x: datetime.fromisoformat(x["startDate"]))
         results = []
@@ -238,7 +238,7 @@ class Api:
                 results.append(lesson)
         return results
 
-    def get_event_id_by_name(self, lesson_name: str):
+    def get_event_id_by_name(self, lesson_name: str) -> list[dict]:
         lessons = self.get_calendar_student_lessons()
         lessons.sort(key=lambda x: datetime.fromisoformat(x["startDate"]))
         results = []

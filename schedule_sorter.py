@@ -95,6 +95,40 @@ def get_event_id_by_name(lessons, lessonName):
                 results.append(lesson["eventId"])
     return results
 
+def get_schedule(lessons):
+    now = datetime.now()
+
+    # Set the start of the week (Monday) at midnight (00:00:00) and end of the week (Sunday) at 23:59:59
+    start_of_week = datetime(now.year, now.month, now.day) - timedelta(days=now.weekday())  # Monday midnight
+    end_of_week = start_of_week + timedelta(days=6, hours=23, minutes=59, seconds=59)  # Sunday 23:59:59
+
+    # Print the start and end of the current week to debug
+    print(f"Start of the week: {start_of_week}")
+    print(f"End of the week: {end_of_week}")
+
+    # Filter lessons for the current week
+    week_lessons = []
+    for lesson in lessons:
+        lesson_start = datetime.fromisoformat(lesson["startDate"])
+        # Debug: print the lesson start date and if it falls in the current week
+        print(f"Checking lesson: {lesson['name']} at {lesson_start}")
+        if start_of_week <= lesson_start <= end_of_week:
+            week_lessons.append(lesson)
+        else:
+            print(f"Excluded lesson: {lesson['name']} at {lesson_start}")
+
+    week_lessons.sort(key=lambda x: datetime.fromisoformat(x["startDate"]))
+
+    # Create a list for each day of the week (Monday to Sunday)
+    schedule = {i: [] for i in range(7)}  # Initialize empty lists for each day (0=Monday, 6=Sunday)
+
+    # Assign lessons to days
+    for lesson in week_lessons:
+        lesson_date = datetime.fromisoformat(lesson["startDate"])
+        day_of_week = lesson_date.weekday()  # Get the day of the week (0=Monday, 6=Sunday)
+        schedule[day_of_week].append(lesson)
+
+    return schedule
 
 print(f"Previous Lesson: {get_previous_lesson(data)}")
 print(f"Current Lesson: {get_current_lesson(data)}")
@@ -122,13 +156,28 @@ print(f"\nThere are {len(amt_lessons1)} lessons with eventId {eventId}")
 
 lessonName = "NAKNAK01a"
 
-print(f"\nResults for lesson name: {lessonName}:")
+print(f"\nResults for lesson name: {lessonName} (pretty printed):")
 amt_lessons2 = get_lessons_by_name(data, lessonName)
 for lesson in amt_lessons2:
     print(f"{lesson["name"]}: {lesson["startDate"]} - {lesson["endDate"]}")
+
+print(f"\nResults for lesson name: {lessonName}:")
+print(get_lessons_by_name(data, lessonName))
+
 
 print(f"\nThere are {len(amt_lessons2)} lessons with the lesson name {lessonName}")
 
 lessonName = "NAKNAK01a"
 print(f"\nEvent ID(s) for {lessonName}:")
 print(get_event_id_by_name(data, lessonName))
+
+print("\nSchedule of the week (raw):")
+print(get_schedule(data))
+
+print("\nSchedule of the week (pretty printed):")
+schedule = get_schedule(data)
+for day, lessons in schedule.items():
+    weekday_name = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"][day]
+    print(f"\n{weekday_name}:")
+    for lesson in lessons:
+        print(f"{lesson["name"]} ({lesson["startDate"]} - {lesson["endDate"]})")
