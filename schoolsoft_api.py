@@ -1,8 +1,7 @@
 #!/usr/bin/env python3
 import requests
 import os
-from sys import exit
-from datetime import datetime
+from datetime import datetime, timedelta
 from dotenv import load_dotenv
 from bs4 import BeautifulSoup
 
@@ -248,6 +247,33 @@ class Api:
                     results.append(lesson["eventId"])
         return results
 
+    def get_weekly_schedule(self) -> list[list]:
+        now = datetime.now()
+        lessons = self.get_calendar_student_lessons()
+        start_of_week = datetime(now.year, now.month, now.day) - timedelta(
+            days=now.weekday()
+        )
+        end_of_week = start_of_week + timedelta(
+            days=6, hours=23, minutes=59, seconds=59
+        )
+
+        week_lessons = []
+        for lesson in lessons:
+            lesson_start = datetime.fromisoformat(lesson["startDate"])
+            if start_of_week <= lesson_start <= end_of_week:
+                week_lessons.append(lesson)
+
+        week_lessons.sort(key=lambda x: datetime.fromisoformat(x["startDate"]))
+
+        schedule = [[] for _ in range(7)]
+
+        for lesson in week_lessons:
+            lesson_date = datetime.fromisoformat(lesson["startDate"])
+            day_of_week = lesson_date.weekday()
+            schedule[day_of_week].append(lesson)
+
+        return schedule
+
 
 if __name__ == "__main__":
     load_dotenv()
@@ -257,3 +283,4 @@ if __name__ == "__main__":
     school = os.getenv("SCHOOL")
 
     api = Api(username, password, school)
+    print(api.get_weekly_schedule())
