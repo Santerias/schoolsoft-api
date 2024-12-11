@@ -5,6 +5,7 @@ from datetime import datetime, timedelta
 with open("test_lesson_data.json", "r", encoding="UTF-8") as f:
     data = json.load(f)
 
+
 def get_current_lesson(lessons):
     now = datetime.now()
     for lesson in lessons:
@@ -14,6 +15,7 @@ def get_current_lesson(lessons):
             return f"{lesson["name"]} in room {lesson["room"]} with {lesson["teacher"]} at {lesson["startDate"]} to {lesson["endDate"]}"
     return None
 
+
 def get_next_lesson(lessons):
     now = datetime.now()
     lessons.sort(key=lambda x: datetime.fromisoformat(x["startDate"]))
@@ -22,6 +24,7 @@ def get_next_lesson(lessons):
         if start_date > now:
             return f"{lesson["name"]} in room {lesson["room"]} with {lesson["teacher"]} at {lesson["startDate"]} to {lesson["endDate"]}"
     return None
+
 
 def get_previous_lesson(lessons):
     now = datetime.now()
@@ -37,23 +40,33 @@ def get_previous_lesson(lessons):
     return f"{previous_lesson["name"]} in room {previous_lesson["room"]} with {previous_lesson["teacher"]} at {previous_lesson["startDate"]} to {previous_lesson["endDate"]}"
     # return previous_lesson
 
+
 def get_todays_lessons(lessons):
     now = datetime.now().date()
     todays_lessons = [
-        lesson for lesson in lessons
+        lesson
+        for lesson in lessons
         if datetime.fromisoformat(lesson["startDate"]).date() == now
     ]
     todays_lessons.sort(key=lambda x: datetime.fromisoformat(x["startDate"]))
     return todays_lessons
 
-def get_lesson_status(lessons, lessonId, week):
+
+def get_lesson_status(lessons, lessonId, week, pp=False):
     lessons.sort(key=lambda x: datetime.fromisoformat(x["startDate"]))
     for lesson in lessons:
         if "studentLessonStatus" in lesson:
             student_status = lesson["studentLessonStatus"]
-            if student_status["week"] == week and student_status["lessonId"] == lessonId:
-                return f"Lesson ID: {student_status["lessonId"]}\nWeek: {student_status["week"]}\nComment: {student_status["comment"]}\nAbsence: {student_status["absence"]}\nAttendance: {student_status["name"]}\nReason: {student_status["reason"]}\n"
+            if (
+                student_status["week"] == week
+                and student_status["lessonId"] == lessonId
+            ):
+                if pp:
+                    return f"Lesson ID: {student_status["lessonId"]}\nWeek: {student_status["week"]}\nComment: {student_status["comment"]}\nAbsence: {student_status["absence"]}\nAttendance: {student_status["name"]}\nReason: {student_status["reason"]}\n"
+                else:
+                    return student_status
     return None
+
 
 def get_lessons_by_id(lessons, lessonId):
     lessons.sort(key=lambda x: datetime.fromisoformat(x["startDate"]))
@@ -63,6 +76,7 @@ def get_lessons_by_id(lessons, lessonId):
             results.append(lesson)
     return results
 
+
 def get_lessons_by_name(lessons, lessonName):
     lessons.sort(key=lambda x: datetime.fromisoformat(x["startDate"]))
     results = []
@@ -70,6 +84,7 @@ def get_lessons_by_name(lessons, lessonName):
         if lessonName in lesson["name"]:
             results.append(lesson)
     return results
+
 
 def get_event_id_by_name(lessons, lessonName):
     lessons.sort(key=lambda x: datetime.fromisoformat(x["startDate"]))
@@ -80,6 +95,7 @@ def get_event_id_by_name(lessons, lessonName):
                 results.append(lesson["eventId"])
     return results
 
+
 print(f"Previous Lesson: {get_previous_lesson(data)}")
 print(f"Current Lesson: {get_current_lesson(data)}")
 print(f"Next Lesson: {get_next_lesson(data)}")
@@ -89,8 +105,11 @@ print("\nToday's lessons (pretty printed):")
 for lesson in get_todays_lessons(data):
     print(f"{lesson["name"]} at {lesson["startDate"]} to {lesson["endDate"]}")
 
-print("Status for GYAREE:")
+print("\nStatus for GYAREE:")
 print(get_lesson_status(data, 379377, 35))
+
+print("\nStatus for GYAREE (pretty printed):")
+print(get_lesson_status(data, 379377, 35, pp=True))
 
 eventId = 379418
 
