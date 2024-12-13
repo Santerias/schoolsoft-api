@@ -56,8 +56,8 @@ class Api:
             raise ApiException(f"Request to {url} failed") from e
 
     # General Endpoints
-    def get_session(self) -> dict:
+    def fetch_session(self) -> dict:
         return self.session.get(f"{self.rest_url}/session").json()
 
-    def get_parameters(self) -> dict:
+    def fetch_parameters(self) -> dict:
         return self.session.get(f"{self.rest_url}/parameters").json()
