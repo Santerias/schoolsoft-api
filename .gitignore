@@ -162,5 +162,4 @@ cython_debug/
 #.idea/
 
 
-# Custom Lessons data for schedule_sorter.py
 test_*.json

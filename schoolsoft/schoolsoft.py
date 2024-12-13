@@ -1,19 +1,28 @@
 #!/usr/bin/env python3
+
+# TODO: Make main function/helper for being able to specify endpoint instead of
+#       having a separate function for accessing every single endpoint
+
 import requests
-import os
+import logging
 from datetime import datetime, timedelta
-from dotenv import load_dotenv
 from bs4 import BeautifulSoup
+from .exceptions import ApiException
 
 
 class Api:
-    def __init__(self, username, password, school):
+    """This class is used to interact with the SchoolSoft API"""
+
+    def __init__(
+        self, username: str, password: str, school: str, logger: logging.Logger = None
+    ) -> None:
         self.username = username
         self.password = password
         self.school = school
         self.session = requests.Session()
         self.base_url = f"https://sms.schoolsoft.se/{self.school}"
         self.rest_url = f"{self.base_url}/rest-api"
+        self.logger = logger or logging.getLogger(__name__)
 
         self.authenticate()
 
@@ -22,48 +31,53 @@ class Api:
         Sends your credentials in plaintext and allows you to access SchoolSoft REST API
         """
 
-        base_url = f"https://sms.schoolsoft.se/{school}"
+        base_url = f"https://sms.schoolsoft.se/{self.school}"
         login_url = f"{base_url}/jsp/Login.jsp"
         saml_login_url = f"{base_url}/samlLogin.jsp"
 
-        self.session.get(login_url)
-        saml_login_response = self.session.get(saml_login_url, allow_redirects=False)
-        location_url = saml_login_response.headers.get("Location", None)
-        saml_response = self.session.get(location_url, allow_redirects=False)
-        return_to_url = saml_response.headers.get("Location", None)
+        try:
+            self.session.get(login_url)
+            saml_login_response = self.session.get(
+                saml_login_url, allow_redirects=False
+            )
+            location_url = saml_login_response.headers.get("Location", None)
+            saml_response = self.session.get(location_url, allow_redirects=False)
+            return_to_url = saml_response.headers.get("Location", None)
 
-        final_response = self.session.get(return_to_url)
-        login_url = final_response.url
-        login_data = {
-            "fc": "",
-            "idpPlugin": "true",
-            "username": self.username,
-            "password": self.password,
-        }
+            final_response = self.session.get(return_to_url)
+            login_url = final_response.url
+            login_data = {
+                "fc": "",
+                "idpPlugin": "true",
+                "username": self.username,
+                "password": self.password,
+            }
 
-        final_login_response = self.session.post(
-            login_url, data=login_data, allow_redirects=False
-        )
+            final_login_response = self.session.post(
+                login_url, data=login_data, allow_redirects=False
+            )
 
-        saml_final_url = final_login_response.headers.get("Location", None)
-        saml_final_response = self.session.get(saml_final_url)
+            saml_final_url = final_login_response.headers.get("Location", None)
+            saml_final_response = self.session.get(saml_final_url)
 
-        soup = BeautifulSoup(saml_final_response.text, "html.parser")
-        _saml_response = soup.find("input", {"name": "SAMLResponse"})["value"]
-        _relay_state = soup.find("input", {"name": "RelayState"})["value"]
+            soup = BeautifulSoup(saml_final_response.text, "html.parser")
+            _saml_response = soup.find("input", {"name": "SAMLResponse"})["value"]
+            _relay_state = soup.find("input", {"name": "RelayState"})["value"]
 
-        post_data = {
-            "SAMLResponse": _saml_response,
-            "RelayState": _relay_state,
-        }
+            post_data = {
+                "SAMLResponse": _saml_response,
+                "RelayState": _relay_state,
+            }
 
-        self.session.post(
-            "https://sms.schoolsoft.se/Shibboleth.sso/SAML2/POST",
-            data=post_data,
-            allow_redirects=False,
-        )
+            self.session.post(
+                "https://sms.schoolsoft.se/Shibboleth.sso/SAML2/POST",
+                data=post_data,
+                allow_redirects=False,
+            )
 
-        self.session.get(saml_login_url)
+            self.session.get(saml_login_url)
+        except requests.exceptions.RequestException as e:
+            raise ApiException("Authentication failed") from e
 
     # General Endpoints
     def get_session(self) -> dict:
@@ -273,14 +287,3 @@ class Api:
             schedule[day_of_week].append(lesson)
 
         return schedule
-
-
-if __name__ == "__main__":
-    load_dotenv()
-
-    username = os.getenv("USER")
-    password = os.getenv("PASS")
-    school = os.getenv("SCHOOL")
-
-    api = Api(username, password, school)
-    print(api.get_weekly_schedule())
