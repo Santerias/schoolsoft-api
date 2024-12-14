@@ -10,4 +10,4 @@ if __name__ == "__main__":
     SCHOOL = getenv("SCHOOL")
 
     api = schoolsoft.Api(USER, PASS, SCHOOL)
-    print(api.get_current_lesson())
+    print(api.utils.get_next_lesson())
