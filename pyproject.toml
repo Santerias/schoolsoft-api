@@ -1,0 +1,20 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "schoolsoft-api_santerias"
+version = "0.0.1"
+authors = [
+    { name="Santerias" },
+]
+description = "An API wrapper for SchoolSoft's REST API written in Python"
+readme = "README.md"
+requires-python = ">=3.13.0"
+classifiers = [
+    "Programming Language :: Python :: 3",
+]
+
+[project.urls]
+Homepage = "https://github.com/Santerias/schoolsoft-api"
+Issues = "https://github.com/Santerias/schoolsoft-api/issues"
