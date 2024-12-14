@@ -109,8 +109,6 @@ def get_schedule(lessons):
             week_lessons.append(lesson)
 
     week_lessons.sort(key=lambda x: datetime.fromisoformat(x["startDate"]))
-
-    # schedule = {i: [] for i in range(7)}
     schedule = [[] for _ in range(7)]
 
     for lesson in week_lessons:

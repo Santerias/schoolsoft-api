@@ -7,7 +7,7 @@ class Utils:
 
     def get_previous_lesson(self, pretty_print: bool = False) -> dict | str:
         """
-        Returns authenticated user's previous lesson as a dict, but can also return
+        Returns previous lesson as a dict, but can also return
         pretty printed str with minimal information
         """
 

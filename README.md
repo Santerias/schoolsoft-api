@@ -1,13 +1,27 @@
-# Schoolsoft API
+# SchoolSoft API Wrapper
 
-Python API wrapper for undocumented Schoolsoft REST API
+<img src="https://schoolsoft.se/wp-content/uploads/2023/10/schoolsoft_logo_dark_rounded.svg" align="right"
+    alt="Official SchoolSoft logo" width="64" height="64">
+
+This project is an API wrapper for SchoolSoft's REST API written in Python, useful for easy integration with SchoolSoft and getting your schedule and so on.
+
+- Handles authentication
+- Pretty printing
+- Helper functions (e.g. To fetch your next/upcoming lesson)
 
 ## Usage
 
-Create `.env` file in root and use this template:
+> NOTE: Has only been tested with Python 3.13.0, you might run into issues otherwise.
 
+Simple example to get your next/upcoming lesson
+
+```python
+from schoolsoft import Api
+
+api = Api(username, password, school)
+print(api.utils.get_next_lesson())
 ```
-USER = user.name
-PASS = mypassword
-SCHOOL = school
-```
+
+## Credits
+
+This project is inspired by Blatzar's repo: [schoolsoft-api](https://github.com/Blatzar/schoolsoft-api) which is not being maintained anymore.
