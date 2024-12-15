@@ -1,0 +1,16 @@
+beautifulsoup4==4.12.3
+build==1.2.2.post1
+certifi==2024.8.30
+charset-normalizer==3.4.0
+colorama==0.4.6
+idna==3.10
+iniconfig==2.0.0
+packaging==24.2
+pluggy==1.5.0
+pyproject_hooks==1.2.0
+pytest==8.3.4
+python-dotenv==1.0.1
+requests==2.32.3
+-e git+https://github.com/Santerias/schoolsoft-api@de21b922c0e9598043adc762b2d0ab89183081fd#egg=schoolsoft
+soupsieve==2.6
+urllib3==2.2.3
