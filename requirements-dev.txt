@@ -11,6 +11,7 @@ pyproject_hooks==1.2.0
 pytest==8.3.4
 python-dotenv==1.0.1
 requests==2.32.3
--e git+https://github.com/Santerias/schoolsoft-api@de21b922c0e9598043adc762b2d0ab89183081fd#egg=schoolsoft
+ruff==0.8.3
+-e git+https://github.com/Santerias/schoolsoft-api@8eb83d611ebdb9f9a28472d85588511fb1d12c50#egg=schoolsoft
 soupsieve==2.6
 urllib3==2.2.3
