@@ -1,5 +1,5 @@
 import requests
-from .exceptions import ApiException
+from .exceptions import ApiException, InvalidCredentials
 from bs4 import BeautifulSoup
 
 
@@ -37,6 +37,10 @@ class Auth:
             final_login_response = self.api.session.post(
                 login_url, data=login_data, allow_redirects=False
             )
+
+            final_login_soup = BeautifulSoup(final_login_response.text, "html.parser")
+            if final_login_soup.find("font", attrs={"weight": 500}) is not None:
+                raise InvalidCredentials("Invalid credentials provided")
 
             saml_final_url = final_login_response.headers.get("Location", None)
             saml_final_response = self.api.session.get(saml_final_url)
