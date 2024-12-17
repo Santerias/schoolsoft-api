@@ -7,7 +7,7 @@ class Auth:
     def __init__(self, api):
         self.api = api
 
-    def authenticate(self):
+    def authenticate(self) -> None:
         """
         Sends your credentials in plaintext and allows you to access SchoolSoft REST API
         """

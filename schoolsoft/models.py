@@ -1,9 +1,17 @@
-# Specific modules like calendar should be able to return array of Lesson
-# Instead of just returning a dict for better OOP
-
 from dataclasses import dataclass
 from datetime import datetime
-import enum
+
+
+@dataclass
+class StudentLessonStatus:
+    lessonId: int
+    status: int
+    statusType: int
+    week: int
+    comment: str | None
+    absence: int
+    name: str
+    reason: str | None
 
 
 @dataclass
@@ -23,8 +31,17 @@ class Lesson:
     status: int
     category: str
     roomBooking: bool
+    studentLessonStatus: StudentLessonStatus | None = None
 
+    @classmethod
+    def from_dict(cls, data: dict) -> "Lesson":
+        """Creates a Lesson instance from a dictionary."""
+        data["startDate"] = datetime.fromisoformat(data["startDate"])
+        data["endDate"] = datetime.fromisoformat(data["endDate"])
 
-class LessonCategory(enum.Enum):
-    lesson = "lesson"
-    exam = "exam"
+        if "studentLessonStatus" in data:
+            data["studentLessonStatus"] = StudentLessonStatus(
+                **data["studentLessonStatus"]
+            )
+
+        return cls(**data)

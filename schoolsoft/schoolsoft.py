@@ -1,8 +1,5 @@
 #!/usr/bin/env python3
 
-# TODO: Make main function/helper for being able to specify endpoint instead of
-#       having a separate function for accessing every single endpoint
-
 import requests
 import logging
 
