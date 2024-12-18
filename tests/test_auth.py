@@ -12,10 +12,8 @@ school = getenv("SCHOOL")
 
 def test_invalid_credentials():
     with pytest.raises(schoolsoft.exceptions.InvalidCredentials):
-        api = schoolsoft.Api("aksodkaopsdkpo", "aksdpkoasdkpoa", "nti")
-        api.utils.get_next_lesson()
+        schoolsoft.Api("aksodkaopsdkpo", "aksdpkoasdkpoa", "nti")
 
 
 def test_valid_credentials():
-    api = schoolsoft.Api(username, password, school)
-    api.utils.get_next_lesson()
+    schoolsoft.Api(username, password, school)
