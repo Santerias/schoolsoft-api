@@ -1,4 +1,4 @@
-from .models import Lesson
+from .models import Lesson, Store
 
 
 class Calendar:
@@ -6,8 +6,10 @@ class Calendar:
         self.api = api
 
     def fetch_student_lessons(self) -> list[Lesson]:
-        obj = self.api._request("get", "/calendar/student/lessons")
-        return [Lesson.from_dict(lesson_data) for lesson_data in obj]
+        return [
+            Lesson.from_dict(lesson_data)
+            for lesson_data in self.api._request("get", "/calendar/student/lessons")
+        ]
 
     def fetch_theme(self) -> dict:
         return self.api._request("get", "/calendar/theme")
@@ -19,8 +21,8 @@ class Calendar:
         return self.api._request("put", "/calendar/student/settings", data)
 
     # Endpoint to get all available rooms, classes, and teachers (with ids)
-    def fetch_student_stores(self) -> dict:
-        return self.api._request("get", "/calendar/student/stores")
+    def fetch_student_stores(self) -> Store:
+        return Store.from_dict(self.api._request("get", "/calendar/student/stores"))
 
     def fetch_student_resource(self) -> dict:
         return self.api._request("get", "/calendar/student/resource")

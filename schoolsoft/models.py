@@ -83,3 +83,53 @@ class Lesson:
             )
 
         return cls(**converted_data)
+
+
+@dataclass
+class Grade:
+    value: int
+    name: str
+
+    @classmethod
+    def from_dict(cls, data: dict) -> "Grade":
+        """Creates a Class instance from a dictionary."""
+        return cls(value=data["value"], name=" ".join(data["text"].split()))
+
+
+@dataclass
+class Room:
+    value: int
+    name: str
+
+    @classmethod
+    def from_dict(cls, data: dict) -> "Room":
+        """Creates a Room instance from a dictionary."""
+        return cls(value=data["value"], name=" ".join(data["text"].split()))
+
+
+@dataclass
+class Teacher:
+    value: int
+    name: str
+
+    @classmethod
+    def from_dict(cls, data: dict) -> "Teacher":
+        """Creates a Teacher instance from a dictionary."""
+        return cls(value=data["value"], name=" ".join(data["text"].split()))
+
+
+@dataclass
+class Store:
+    teachers: list[Teacher]
+    grades: list[Grade]
+    rooms: list[Room]
+
+    @classmethod
+    def from_dict(cls, data: dict) -> "Store":
+        """Creates a Store instance from a dictionary."""
+
+        teachers = [Teacher.from_dict(item) for item in data["teacherItems"]]
+        grades = [Grade.from_dict(item) for item in data["classItems"]]
+        rooms = [Room.from_dict(item) for item in data["roomItems"]]
+
+        return cls(teachers=teachers, grades=grades, rooms=rooms)
