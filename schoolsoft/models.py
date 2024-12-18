@@ -1,47 +1,85 @@
+import re
 from dataclasses import dataclass
 from datetime import datetime
 
 
+def camel_to_snake(camel_case_str: str) -> str:
+    """convert camelCase to snake_case"""
+    return re.sub(r"([a-z])([A-Z])", r"\1_\2", camel_case_str).lower()
+
+
+def map_day_id_to_name(day_id: int) -> str:
+    days = [
+        "Monday",
+        "Tuesday",
+        "Wednesday",
+        "Thursday",
+        "Friday",
+        "Saturday",
+        "Sunday",
+    ]
+
+    return days[day_id % 7]
+
+
 @dataclass
 class StudentLessonStatus:
-    lessonId: int
+    lesson_id: int
     status: int
-    statusType: int
+    status_type: int
     week: int
     comment: str | None
     absence: int
     name: str
     reason: str | None
 
+    @classmethod
+    def from_dict(cls, data: dict) -> "StudentLessonStatus":
+        """Creates a StudentLessonStatus instance from a dictionary."""
+        converted_data = {camel_to_snake(key): value for key, value in data.items()}
+        return cls(**converted_data)
+
 
 @dataclass
 class Lesson:
-    eventId: int
+    event_id: int
     name: str
     description: str | None
-    startDate: datetime
-    endDate: datetime
-    allDay: bool | None
-    eventColor: str | None
+    start_date: datetime
+    end_date: datetime
+    all_day: bool | None
+    event_color: str | None
     editable: bool
     room: str | None
-    teachingGroup: str
+    teaching_group: str
     teacher: str | None
-    dayId: int
+    day_id: int
     status: int
     category: str
-    roomBooking: bool
-    studentLessonStatus: StudentLessonStatus | None = None
+    room_booking: bool
+    day: str | None = None
+    student_lesson_status: StudentLessonStatus | None = None
+
+    def __post__init__(self):
+        if self.day is None:
+            self.day = map_day_id_to_name(self.day_id)
 
     @classmethod
     def from_dict(cls, data: dict) -> "Lesson":
         """Creates a Lesson instance from a dictionary."""
-        data["startDate"] = datetime.fromisoformat(data["startDate"])
-        data["endDate"] = datetime.fromisoformat(data["endDate"])
+        converted_data = {camel_to_snake(key): value for key, value in data.items()}
 
-        if "studentLessonStatus" in data:
-            data["studentLessonStatus"] = StudentLessonStatus(
-                **data["studentLessonStatus"]
+        converted_data["start_date"] = datetime.fromisoformat(
+            converted_data["start_date"]
+        )
+        converted_data["end_date"] = datetime.fromisoformat(converted_data["end_date"])
+
+        if "day" not in converted_data:
+            converted_data["day"] = map_day_id_to_name(converted_data["day_id"])
+
+        if "student_lesson_status" in converted_data:
+            converted_data["student_lesson_status"] = StudentLessonStatus.from_dict(
+                converted_data["student_lesson_status"]
             )
 
-        return cls(**data)
+        return cls(**converted_data)
