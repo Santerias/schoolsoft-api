@@ -26,7 +26,7 @@ class Api:
         self.rest_url = f"{self.base_url}/rest-api"
         self.logger = logger or logging.getLogger(__name__)
 
-        self.authenticate()
+        # self.authenticate()
 
         self.calendar = Calendar(self)
         self.lunch_menu = LunchMenu(self)
