@@ -1,114 +1,94 @@
 from datetime import datetime, timedelta
+from .models import Lesson
 
 
 class Utils:
     def __init__(self, api):
         self.api = api
 
-    def get_previous_lesson(self, pretty_print: bool = False) -> dict | str:
-        """
-        Returns previous lesson as a dict, but can also return
-        pretty printed str with minimal information
-        """
-
-        now = datetime.now()
-        lessons = self.api.calendar.fetch_student_lessons()
-        lessons.sort(key=lambda x: datetime.fromisoformat(x["startDate"]))
-        previous_lesson = None
-
+    def get_previous_lesson(self, lessons: list[Lesson]) -> Lesson | None:
+        lessons.sort(key=lambda lesson: lesson.start_date)
         for lesson in lessons:
-            end_date = datetime.fromisoformat(lesson["endDate"])
-            if end_date < now:
-                previous_lesson = lesson
-            else:
-                break
+            if lesson.end_date < datetime.now():
+                return lesson
 
-        if pretty_print:
-            return f"{previous_lesson["name"]} in room {previous_lesson["room"]} with {previous_lesson["teacher"]} at {previous_lesson["startDate"]} to {previous_lesson["endDate"]}"
-        else:
-            return previous_lesson
-
-    def get_current_lesson(self, pretty_print: bool = False) -> dict | str:
-        now = datetime.now()
-        lessons = self.api.calendar.fetch_student_lessons()
-        for lesson in lessons:
-            start_date = datetime.fromisoformat(lesson["startDate"])
-            end_date = datetime.fromisoformat(lesson["endDate"])
-            if start_date <= now <= end_date:
-                if pretty_print:
-                    return f"{lesson["name"]} in room {lesson["room"]} with {lesson["teacher"]} at {lesson["startDate"]} to {lesson["endDate"]}"
-                else:
-                    return lesson
         return None
 
-    def get_next_lesson(self, pretty_print: bool = False) -> dict | str:
-        now = datetime.now()
-        lessons = self.api.calendar.fetch_student_lessons()
-        lessons.sort(key=lambda x: datetime.fromisoformat(x["startDate"]))
+    def get_current_lesson(self, lessons: list[Lesson]) -> Lesson | None:
         for lesson in lessons:
-            start_date = datetime.fromisoformat(lesson["startDate"])
-            if start_date > now:
-                if pretty_print:
-                    return f"{lesson["name"]} in room {lesson["room"]} with {lesson["teacher"]} at {lesson["startDate"]} to {lesson["endDate"]}"
-                else:
-                    return lesson
+            if lesson.start_date <= datetime.now() <= lesson.end_date:
+                return lesson
+
         return None
 
-    def get_todays_lessons(self) -> list:
-        now = datetime.now().date()
-        lessons = self.api.calendar.fetch_student_lessons()
+    def get_next_lesson(self, lessons: list[Lesson]) -> Lesson | None:
+        lessons.sort(key=lambda lesson: lesson.start_date)
+        for lesson in lessons:
+            if lesson.start_date > datetime.now():
+                return lesson
+
+        return None
+
+    def get_todays_lessons(self, lessons: list[Lesson]) -> list[Lesson]:
         todays_lessons = [
             lesson
             for lesson in lessons
-            if datetime.fromisoformat(lesson["startDate"]).date() == now
+            if lesson.start_date.date() == datetime.now().date()
         ]
-        todays_lessons.sort(key=lambda x: datetime.fromisoformat(x["startDate"]))
+
+        todays_lessons.sort(key=lambda lesson: lesson.start_date)
         return todays_lessons
 
-    def get_lesson_status(self, lesson_id: int, week: int) -> dict:
-        lessons = self.api.calendar.fetch_student_lessons()
-        lessons.sort(key=lambda x: datetime.fromisoformat(x["startDate"]))
-        for lesson in lessons:
-            if "studentLessonStatus" in lesson:
-                student_status = lesson["studentLessonStatus"]
-                if (
-                    student_status["week"] == week
-                    and student_status["lessonId"] == lesson_id
-                ):
-                    return lesson
-        return None
+    # def get_lesson_status(
+    #     self, lessons: list[Lesson], lesson_id: int, week: int
+    # ) -> Lesson | None:
+    #     lessons.sort(key=lambda lesson: lesson.start_date)
 
-    def get_lessons_by_id(self, lesson_id: int) -> list[dict]:
-        lessons = self.api.calendar.fetch_student_lessons()
-        lessons.sort(key=lambda x: datetime.fromisoformat(x["startDate"]))
+    #     for lesson in lessons:
+    #         if lesson.student_lesson_status:
+    #             if (
+    #                 lesson.student_lesson_status.week == week
+    #                 and lesson.student_lesson_status.lesson_id == lesson_id
+    #             ):
+    #                 return lesson
+
+    #     return None
+
+    def get_lessons_by_id(self, lessons: list[Lesson], lesson_id: int) -> list[Lesson]:
+        lessons.sort(key=lambda lesson: lesson.start_date)
         results = []
+
         for lesson in lessons:
-            if lesson["eventId"] == lesson_id:
+            if lesson.event_id == lesson_id:
                 results.append(lesson)
+
         return results
 
-    def get_lessons_by_name(self, lesson_name: str) -> list[dict]:
-        lessons = self.api.calendar.fetch_student_lessons()
-        lessons.sort(key=lambda x: datetime.fromisoformat(x["startDate"]))
+    def get_lessons_by_name(
+        self, lessons: list[Lesson], lesson_name: str
+    ) -> list[Lesson]:
+        lessons.sort(key=lambda lesson: lesson.start_date)
         results = []
+
         for lesson in lessons:
-            if lesson_name in lesson["name"]:
+            if lesson.name.lower() == lesson_name.lower():
                 results.append(lesson)
+
         return results
 
-    def get_event_id_by_name(self, lesson_name: str) -> list[dict]:
-        lessons = self.api.calendar.fetch_student_lessons()
-        lessons.sort(key=lambda x: datetime.fromisoformat(x["startDate"]))
-        results = []
-        for lesson in lessons:
-            if lesson_name in lesson["name"]:
-                if lesson["eventId"] not in results:
-                    results.append(lesson["eventId"])
-        return results
+    # def get_event_id_by_name(
+    #     self, lessons: list[Lesson], lesson_name: str
+    # ) -> list[Lesson]:
+    #     lessons.sort(key=lambda x: datetime.fromisoformat(x["startDate"]))
+    #     results = []
+    #     for lesson in lessons:
+    #         if lesson_name in lesson["name"]:
+    #             if lesson["eventId"] not in results:
+    #                 results.append(lesson["eventId"])
+    #     return results
 
-    def get_weekly_schedule(self) -> list[list]:
+    def get_weekly_schedule(self, lessons: list[Lesson]) -> list[list[Lesson]]:
         now = datetime.now()
-        lessons = self.api.calendar.fetch_student_lessons()
         start_of_week = datetime(now.year, now.month, now.day) - timedelta(
             days=now.weekday()
         )
@@ -118,17 +98,14 @@ class Utils:
 
         week_lessons = []
         for lesson in lessons:
-            lesson_start = datetime.fromisoformat(lesson["startDate"])
-            if start_of_week <= lesson_start <= end_of_week:
+            if start_of_week <= lesson.start_date <= end_of_week:
                 week_lessons.append(lesson)
 
-        week_lessons.sort(key=lambda x: datetime.fromisoformat(x["startDate"]))
+        week_lessons.sort(key=lambda lesson: lesson.start_date)
 
         schedule = [[] for _ in range(7)]
 
         for lesson in week_lessons:
-            lesson_date = datetime.fromisoformat(lesson["startDate"])
-            day_of_week = lesson_date.weekday()
-            schedule[day_of_week].append(lesson)
+            schedule[lesson.start_date.weekday()].append(lesson)
 
         return schedule
