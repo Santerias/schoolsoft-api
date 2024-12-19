@@ -60,7 +60,7 @@ class Lesson:
     day: str | None = None
     student_lesson_status: StudentLessonStatus | None = None
 
-    def __post__init__(self):
+    def __post_init__(self):
         if self.day is None:
             self.day = map_day_id_to_name(self.day_id)
 
