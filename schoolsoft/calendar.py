@@ -1,27 +1,39 @@
-from .models import Lesson, Store
+from .models import Lesson, Store, Theme, CalendarSettings
 
 
 class Calendar:
     def __init__(self, api):
         self.api = api
 
-    def fetch_student_lessons(self) -> list[Lesson]:
+    def get_lessons(self) -> list[Lesson]:
         return [
             Lesson.from_dict(lesson_data)
             for lesson_data in self.api._request("get", "/calendar/student/lessons")
         ]
 
-    def fetch_theme(self) -> dict:
-        return self.api._request("get", "/calendar/theme")
+    def get_theme(self) -> Theme:
+        return Theme.from_dict(self.api._request("get", "/calendar/theme"))
 
-    def fetch_student_settings(self) -> dict:
-        return self.api._request("get", "/calendar/student/settings")
+    def get_settings(self) -> CalendarSettings:
+        return CalendarSettings.from_dict(
+            self.api._request("get", "/calendar/student/settings")
+        )
 
-    def put_calendar_student_settings(self, data) -> dict:
-        return self.api._request("put", "/calendar/student/settings", data)
+    def update_settings(self, settings: CalendarSettings | dict) -> CalendarSettings:
+        if isinstance(settings, CalendarSettings):
+            data = CalendarSettings.to_dict(settings)
+            response = self.api._request("put", "/calendar/student/settings", json=data)
+            return CalendarSettings.from_dict(response)
 
-    # Endpoint to get all available rooms, classes, and teachers (with ids)
-    def fetch_student_stores(self) -> Store:
+        if isinstance(settings, dict):
+            response = self.api._request(
+                "put", "/calendar/student/settings", json=settings
+            )
+            return CalendarSettings.from_dict(response)
+
+        return None
+
+    def get_store(self) -> Store:
         return Store.from_dict(self.api._request("get", "/calendar/student/stores"))
 
     def fetch_student_resource(self) -> dict:

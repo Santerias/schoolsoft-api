@@ -1,11 +1,17 @@
-import re
 from dataclasses import dataclass
 from datetime import datetime
+import re
 
 
 def camel_to_snake(camel_case_str: str) -> str:
     """convert camelCase to snake_case"""
     return re.sub(r"([a-z])([A-Z])", r"\1_\2", camel_case_str).lower()
+
+
+def snake_to_camel(snake_case_str: str) -> str:
+    """convert snake_case to camelCase"""
+    words = snake_case_str.split("_")
+    return words[0] + "".join(word.capitalize() for word in words[1:])
 
 
 def map_day_id_to_name(day_id: int) -> str:
@@ -127,9 +133,38 @@ class Store:
     @classmethod
     def from_dict(cls, data: dict) -> "Store":
         """Creates a Store instance from a dictionary."""
-
         teachers = [Teacher.from_dict(item) for item in data["teacherItems"]]
         grades = [Grade.from_dict(item) for item in data["classItems"]]
         rooms = [Room.from_dict(item) for item in data["roomItems"]]
 
         return cls(teachers=teachers, grades=grades, rooms=rooms)
+
+
+@dataclass
+class Theme:
+    value: str
+
+    @classmethod
+    def from_dict(cls, data: dict) -> "Theme":
+        return cls(value=data["theme"])
+
+
+@dataclass
+class CalendarSettings:
+    user_type: str
+    user_id: int
+    app: bool
+    mode: str
+    categories: list
+    show_weekends: bool
+    agenda_range: str
+
+    @classmethod
+    def from_dict(cls, data: dict) -> "CalendarSettings":
+        """Creates a Student instance from a dictionary."""
+        converted_data = {camel_to_snake(key): value for key, value in data.items()}
+        return cls(**converted_data)
+
+    @classmethod
+    def to_dict(cls, settings: "CalendarSettings") -> dict:
+        return {snake_to_camel(key): value for key, value in vars(settings).items()}
