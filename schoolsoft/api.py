@@ -80,7 +80,9 @@ class Api:
         except requests.exceptions.RequestException as e:
             raise ApiException("Authentication failed") from e
 
-    def _request(self, method: str, endpoint: str, data=None, json=None) -> dict:
+    def _request(
+        self, method: str, endpoint: str, data=None, json=None, status=False
+    ) -> dict:
         url = f"{self.rest_url}{endpoint}"
         try:
             if method.lower() == "get":
@@ -91,12 +93,23 @@ class Api:
                 raise ValueError("Unsupported HTTP method")
 
             response.raise_for_status()
+
+            if status:
+                return response
+
             return response.json()
         except requests.exceptions.RequestException as e:
             raise ApiException(f"Request to {url} failed") from e
 
-    def fetch_session(self) -> dict:
+    def is_authenticated(self):
+        response = self._request("get", "/session", status=True)
+        if response.status_code == 401 or response.status_code == 403:
+            return False
+
+        return True
+
+    def get_session(self) -> dict:
         return self._request("get", "/session")
 
-    def fetch_parameters(self) -> dict:
+    def get_parameters(self) -> dict:
         return self._request("get", "/parameters")
