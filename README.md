@@ -6,12 +6,11 @@
 This project is an API wrapper for SchoolSoft's REST API written in Python, useful for easy integration with SchoolSoft and getting your schedule and so on.
 
 - Handles authentication
-- Pretty printing
 - Helper functions (e.g. To fetch your next/upcoming lesson)
 
 ## Usage
 
-> NOTE: Has only been tested with Python 3.13.0, you might run into issues otherwise.
+> NOTE: Has only been tested with Python 3.13, you might run into issues otherwise.
 
 Simple example to get your next/upcoming lesson
 
@@ -19,7 +18,9 @@ Simple example to get your next/upcoming lesson
 from schoolsoft import Api
 
 api = Api(username, password, school)
-print(api.utils.get_next_lesson())
+api.authenticate()
+lessons = api.calendar.get_lessons()
+print(schoolsoft.utils.get_next_lesson(lessons))
 ```
 
 ## Credits
