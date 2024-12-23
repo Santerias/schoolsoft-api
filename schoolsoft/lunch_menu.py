@@ -1,6 +1,9 @@
+from .models import Lunch
+
+
 class LunchMenu:
     def __init__(self, api):
         self.api = api
 
-    def fetch_menu(self, week: str) -> dict:
-        return self.api._request("get", f"/lunchmenu/week/{week}")
+    def get_menu(self, week: int) -> Lunch:
+        return Lunch.from_dict(self.api._request("get", f"/lunchmenu/week/{week}"))

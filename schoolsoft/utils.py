@@ -1,17 +1,18 @@
 from datetime import datetime, timedelta
+
 from .models import Lesson, Theme
 
 
 def is_dark(theme: Theme) -> bool:
-    return True if theme.value.lower() == "dark" else False
+    return True if theme.theme.lower() == "dark" else False
 
 
 def is_light(theme: Theme) -> bool:
-    return False if theme.value.lower() == "light" else False
+    return True if theme.theme.lower() == "light" else False
 
 
 def get_previous_lesson(lessons: list[Lesson]) -> Lesson | None:
-    lessons.sort(key=lambda lesson: lesson.start_date)
+    lessons.sort(key=lambda lesson: lesson.start_date, reverse=True)
     for lesson in lessons:
         if lesson.end_date < datetime.now():
             return lesson
@@ -97,20 +98,30 @@ def get_lessons_by_name(lessons: list[Lesson], lesson_name: str) -> list[Lesson]
 #     return results
 
 
-def get_weekly_schedule(lessons: list[Lesson]) -> list[list[Lesson]]:
+def get_weekly_schedule(lessons: list[Lesson], week: int = None) -> list[list[Lesson]]:
     now = datetime.now()
-    start_of_week = datetime(now.year, now.month, now.day) - timedelta(
-        days=now.weekday()
-    )
+
+    if week is not None:
+        year_start = datetime(now.year, 1, 1)
+        start_of_week = (
+            year_start
+            + timedelta(weeks=week - 1)
+            - timedelta(days=year_start.weekday())
+        )
+    else:
+        start_of_week = datetime(now.year, now.month, now.day) - timedelta(
+            days=now.weekday()
+        )
+
     end_of_week = start_of_week + timedelta(days=6, hours=23, minutes=59, seconds=59)
 
-    week_lessons = []
-    for lesson in lessons:
-        if start_of_week <= lesson.start_date <= end_of_week:
-            week_lessons.append(lesson)
+    week_lessons = [
+        lesson
+        for lesson in lessons
+        if start_of_week <= lesson.start_date <= end_of_week
+    ]
 
     week_lessons.sort(key=lambda lesson: lesson.start_date)
-
     schedule = [[] for _ in range(7)]
 
     for lesson in week_lessons:

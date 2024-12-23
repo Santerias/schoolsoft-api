@@ -1,6 +1,6 @@
+import re
 from dataclasses import dataclass
 from datetime import datetime
-import re
 
 
 def camel_to_snake(camel_case_str: str) -> str:
@@ -142,11 +142,11 @@ class Store:
 
 @dataclass
 class Theme:
-    value: str
+    theme: str
 
     @classmethod
     def from_dict(cls, data: dict) -> "Theme":
-        return cls(value=data["theme"])
+        return cls(**data)
 
 
 @dataclass
@@ -168,3 +168,80 @@ class CalendarSettings:
     @classmethod
     def to_dict(cls, settings: "CalendarSettings") -> dict:
         return {snake_to_camel(key): value for key, value in vars(settings).items()}
+
+
+@dataclass
+class Language:
+    language: str
+
+    @classmethod
+    def from_dict(cls, data: dict) -> "Language":
+        return cls(**data)
+
+
+@dataclass
+class Dish:
+    dishType: str
+    dish: str
+
+    @classmethod
+    def from_dict(cls, data: dict) -> "Dish":
+        return cls(**data)
+
+
+@dataclass
+class DayMenu:
+    dayId: int
+    dishes: list[Dish]
+
+    @classmethod
+    def from_dict(cls, data: dict) -> "DayMenu":
+        return cls(
+            dayId=data["dayId"],
+            dishes=[Dish.from_dict(dish) for dish in data["dishes"]],
+        )
+
+
+@dataclass
+class Lunch:
+    menu: list[DayMenu]
+
+    @classmethod
+    def from_dict(cls, data: list) -> "Lunch":
+        return cls(menu=[DayMenu.from_dict(day) for day in data])
+
+
+@dataclass
+class School:
+    org_id: int
+    name: str
+    grade: str
+
+    @classmethod
+    def from_dict(cls, data: dict) -> "School":
+        # could use more dynamic way to convert keys
+        return cls(
+            org_id=data["orgId"], name=data["schoolName"], grade=data["className"]
+        )
+
+
+# TODO: Change to Student
+@dataclass
+class User:
+    first_name: str
+    last_name: str
+    profile_picture: str
+    unread_messages: int
+    active: bool
+    # schools: list[School]
+
+    @classmethod
+    def from_dict(cls, data: list) -> "User":
+        converted_data = {camel_to_snake(key): value for key, value in data.items()}
+        return cls(
+            first_name=converted_data["first_name"],
+            last_name=converted_data["last_name"],
+            profile_picture=converted_data["picture_url"],
+            unread_messages=converted_data["unread_messages"],
+            active=converted_data["active"],
+        )

@@ -1,21 +1,27 @@
+from .models import School, User
+
+
 class Student:
     def __init__(self, api):
         self.api = api
 
-    def fetch_header_student(self) -> dict:
-        return self.api._request("get", "/student/header/student")
+    def get_student(self) -> User:
+        return User.from_dict(self.api._request("get", "/student/header/student"))
 
-    def fetch_header_schools(self) -> dict:
-        return self.api._request("get", "/student/header/schools")
+    def get_schools(self) -> list[School]:
+        return [
+            School.from_dict(school)
+            for school in self.api._request("get", "/student/header/schools")
+        ]
 
-    def fetch_header_skolon(self) -> dict:
+    def get_skolon(self) -> dict:
         return self.api._request("get", "/student/header/skolon")
 
-    def fetch_logo(self) -> dict:
+    def get_school_logo(self) -> dict:
         return self.api._request("get", "/student/logo")
 
-    def fetch_sidebar_sectiongroups(self) -> dict:
+    def get_sidebar_sectiongroups(self) -> dict:
         return self.api._request("get", "/student/sidebar/sectiongroups")
 
-    def fetch_sidebar_autocompleteoptions(self) -> dict:
+    def get_sidebar_autocompleteoptions(self) -> dict:
         return self.api._request("get", "/student/sidebar/autocompleteoptions")

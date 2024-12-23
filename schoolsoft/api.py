@@ -1,21 +1,28 @@
 #!/usr/bin/env python3
 
-import requests
 import logging
 
+import requests
 from bs4 import BeautifulSoup
-from .exceptions import ApiException, InvalidCredentials
+
 from .calendar import Calendar
+from .exceptions import ApiException, InvalidCredentials
+from .localization import Localization
 from .lunch_menu import LunchMenu
 from .student import Student
-from .localization import Localization
 
 
 class Api:
-    """This class is used to interact with the SchoolSoft API"""
+    """
+    This class is used to interact with the SchoolSoft API
+    """
 
     def __init__(
-        self, username: str, password: str, school: str, logger: logging.Logger = None
+        self,
+        username: str = "",
+        password: str = "",
+        school: str = "",
+        logger: logging.Logger = None,
     ) -> None:
         self.username = username
         self.password = password

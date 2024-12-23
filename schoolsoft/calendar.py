@@ -1,4 +1,4 @@
-from .models import Lesson, Store, Theme, CalendarSettings
+from .models import CalendarSettings, Language, Lesson, Store, Theme
 
 
 class Calendar:
@@ -36,20 +36,27 @@ class Calendar:
     def get_store(self) -> Store:
         return Store.from_dict(self.api._request("get", "/calendar/student/stores"))
 
-    def get_student_resource(self) -> dict:
-        return self.api._request("get", "/calendar/student/resource")
+    def get_language(self) -> Language:
+        return Language.from_dict(
+            self.api._request("get", "/calendar/student/language")
+        )
 
-    def get_student_language(self) -> dict:
-        return self.api._request("get", "/calendar/student/language")
-
-    def get_student_news(self) -> dict:
+    # always returns [] during my testing, can't make data-model unfortunately
+    def get_news(self) -> dict:
         return self.api._request("get", "/calendar/student/news")
 
-    def get_student_version(self) -> dict:
+    # Completely useless in my opinion, no need to make data-models
+    # for these endpoints
+    def get_resource(self) -> dict:
+        return self.api._request("get", "/calendar/student/resource")
+
+    # Doesn't return anything at all
+    def get_version(self) -> dict:
         return self.api._request("get", "/calendar/student/version")
 
-    def get_student_plannings(self) -> dict:
+    # these endpoints just return []
+    def get_plannings(self) -> dict:
         return self.api._request("get", "/calendar/student/plannings")
 
-    def get_student_time_bookings(self) -> dict:
+    def get_time_bookings(self) -> dict:
         return self.api._request("get", "/calendar/student/time_bookings")
