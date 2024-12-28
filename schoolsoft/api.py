@@ -13,8 +13,20 @@ from .student import Student
 
 
 class Api:
-    """
-    This class is used to interact with the SchoolSoft API
+    """Represents a connection to the SchoolSoft REST API.
+
+    Args:
+        username (str): Username.
+        password (str): Password.
+        school (str): School name.
+        logger (logging.Logger): Logger to use.
+
+    Example:
+        ```python
+        from schoolsoft import Api
+        api = Api(username, password, school)
+        print(api.get_session())
+        ```
     """
 
     def __init__(
@@ -38,8 +50,11 @@ class Api:
         self.localization = Localization(self)
 
     def authenticate(self) -> None:
-        """
-        Sends your credentials in plaintext and allows you to access SchoolSoft REST API
+        """Authenticates the user using the credentials provided when initializing the `Api` class.
+
+        Raises:
+            InvalidCredentials: Gets raised if the provided credentials are invalid.
+            ApiException: Gets raised if the authentication fails for any other reason.
         """
 
         try:
@@ -90,6 +105,22 @@ class Api:
     def _request(
         self, method: str, endpoint: str, data=None, json=None, status=False
     ) -> dict:
+        """Private method to make requests to the SchoolSoft REST API.
+
+        Args:
+            method (str): HTTP method to use.
+            endpoint (str): Endpoint to request.
+            data (bool, optional): Data to send to the specified endpoint.
+            json (bool, optional): JSON data to send to the specified endpoint.
+            status (bool, optional): If True, returns entire response instead of just json data.
+
+        Raises:
+            ValueError: Gets raised if an unsupported HTTP method is provided.
+            ApiException: Gets raised if the request fails.
+
+        Returns:
+            dict: Returns the JSON response from the API.
+        """
         url = f"{self.rest_url}{endpoint}"
         try:
             if method.lower() == "get":
@@ -109,6 +140,11 @@ class Api:
             raise ApiException(f"Request to {url} failed") from e
 
     def is_authenticated(self):
+        """Checks if the user is authenticated.
+
+        Returns:
+            bool: Returns True if the user is authenticated, otherwise False.
+        """
         response = self._request("get", "/session", status=True)
         if response.status_code == 401 or response.status_code == 403:
             return False
@@ -116,7 +152,17 @@ class Api:
         return True
 
     def get_session(self) -> dict:
+        """Gets JSON data from the /session endpoint.
+
+        Returns:
+            dict: Returns the JSON response from the API.
+        """
         return self._request("get", "/session")
 
     def get_parameters(self) -> dict:
+        """Gets JSON data from the /parameters endpoint.
+
+        Returns:
+            dict: Returns the JSON response from the API.
+        """
         return self._request("get", "/parameters")

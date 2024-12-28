@@ -1,8 +1,10 @@
 """
-SchoolSoft API Wrapper
-~~~~~~~~~~~~~~~~~~~~~~
+SchoolSoft API Wrapper.
 
-A basic wrapper for the SchoolSoft REST API
+SAW, an acronym for "SchoolSoft API Wrapper", is a Python package that provides an easy way for interacting with the SchoolSoft API.
+SAW aims to be as easy to use as possible while still providing a lot of functionality.
+
+More information about SAW can be found at https://github.com/santerias/schoolsoft-api
 """
 
 from . import utils
