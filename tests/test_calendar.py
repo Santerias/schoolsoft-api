@@ -140,6 +140,29 @@ def test_update_settings(calendar):
     assert updated_result.mode == "month"
     assert updated_result.show_weekends is True
 
+    # Test with dict
+    calendar.api._request.return_value = mock_response
+    result = calendar.get_settings()
+
+    assert isinstance(result, CalendarSettings)
+    assert result.user_type == "STUDENT"
+    assert result.user_id == 12345
+
+    dct = result.to_dict(result)
+    dct["mode"] = "month"
+    dct["showWeekends"] = True
+
+    assert isinstance(dct, dict)
+    assert dct["mode"] == "month"
+    assert dct["showWeekends"] is True
+
+    calendar.api._request.return_value = dct
+    updated_dct = calendar.update_settings(dct)
+
+    assert isinstance(updated_dct, CalendarSettings)
+    assert updated_dct.mode == "month"
+    assert updated_dct.show_weekends is True
+
 
 def test_get_store(calendar):
     mock_response = {
