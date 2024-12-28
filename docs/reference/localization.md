@@ -1,0 +1,3 @@
+# Localization
+
+::: schoolsoft.localization.Localization

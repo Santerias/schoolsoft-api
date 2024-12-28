@@ -1,0 +1,7 @@
+# About
+
+This project started out as a simple idea to create a program that uses the SchoolSoft REST API to fetch my lessons and display them on a website, maybe using something like Flask. Around the same time, I was in a programming class at school where we were about to start learning Python. Luckily for me, I had been using Python for a couple of years already, so the intro lessons were a bit repetitive. I wasn’t really interested in learning how to print "Hello, World!" again, so I decided to make a bigger project to challenge myself.
+
+I hadn’t worked on large projects before or created a Python package, so I thought this would be a good opportunity to try something new. I stuck with the original idea of using the SchoolSoft API to display my lessons, but then I thought it might be cooler to make an API wrapper instead. I got the idea from Discord.py, which was created by Rapptz. That project really inspired me and got me interested in diving deeper into object-oriented programming (OOP), which was something I hadn’t really worked with before.
+
+Once I had the idea, I started coding and things went pretty fast at first. But then I ran into a few challenges I hadn’t dealt with before, like writing tests, documenting my code, and learning how to distribute the package on PyPI. These were all new to me, so it took a bit of time to figure them out and learn the basics. Even though I still don’t fully understand everything, I now know how to get around most of it.

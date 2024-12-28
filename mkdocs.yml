@@ -1,0 +1,155 @@
+site_name: SAW
+# site_url: https://example.com
+repo_url: https://github.com/Santerias/schoolsoft-api
+repo_name: santerias/schoolsoft-api
+copyright: Copyright © 2024-present, Santerias
+watch: [mkdocs.yml, docs, schoolsoft]
+
+nav:
+  - Home: index.md
+  - Reference:
+      - reference/index.md
+      - reference/api.md
+      - reference/calendar.md
+      - reference/exceptions.md
+      - reference/localization.md
+      - reference/lunch_menu.md
+      - reference/models.md
+      - reference/student.md
+      - reference/utils.md
+  - About: about.md
+
+theme:
+  logo: images/logo.png
+  features:
+    - content.code.annotate
+    - content.code.copy
+    - content.footnote.tooltips
+    - content.tabs.link
+    - content.tooltips
+    # - navigation.sections
+    # - navigation.expand
+    - navigation.footer
+    - navigation.indexes
+    - navigation.instant
+    - navigation.instant.progress
+    - navigation.path
+    - navigation.tabs
+    - navigation.tabs.sticky
+    - navigation.top
+    - navigation.tracking
+    - search.highlight
+    - search.share
+    - search.suggest
+    - toc.follow
+  language: en
+  palette:
+    - media: "(prefers-color-scheme)"
+      toggle:
+        icon: material/link
+        name: Switch to light mode
+
+    - media: "(prefers-color-scheme: light)"
+      scheme: default
+      primary: indigo
+      accent: indigo
+      toggle:
+        icon: material/toggle-switch
+        name: Switch to dark mode
+
+    - media: "(prefers-color-scheme: dark)"
+      scheme: slate
+      primary: indigo
+      accent: indigo
+      toggle:
+        icon: material/toggle-switch-off
+        name: Switch to system preference
+
+  favicon: images/favicon.ico
+  name: material
+
+# Setting up swedish and english docs (not really needed but might be added in the future)
+# extra:
+#   alternate:
+#     - name: English
+#       link: /en/
+#       lang: en
+#     - name: Swedish
+#       link: /sv/
+#       lang: sv
+
+plugins:
+  - search
+  - git-authors:
+      enabled: true
+  - git-revision-date-localized:
+      type: date
+      fallback_to_build_date: false
+      enable_creation_date: false
+      enabled: true
+  - git-committers:
+      enabled: true
+      repository: santerias/schoolsoft-api
+      branch: main
+  - mkdocstrings:
+      default_handler: python
+      handlers:
+        python:
+          options:
+            show_source: false
+            show_bases: true
+            show_symbol_type_heading: true
+            show_symbol_type_toc: true
+            show_root_heading: true
+            show_root_toc_entry: true
+            show_root_full_path: false
+            docstring_section_style: spacy
+            show_labels: false # will hide stuff like dataclass and classmethods labels
+            merge_init_into_class: false
+            signature_crossrefs: true
+            # separate_signatures: true (should help with dataclasses and massive entries)
+            docstring_options:
+              ignore_init_summary: false
+  - offline:
+      enabled: true
+
+extra:
+  social:
+    - icon: material/github
+      link: https://github.com/Santerias
+    - icon: material/linkedin
+      link: https://linkedin.com/in/pimanroya
+
+markdown_extensions:
+  # - abbr
+  # - attr_list
+  - footnotes
+  - tables
+  - def_list
+  - pymdownx.betterem
+  - pymdownx.caret
+  - pymdownx.inlinehilite
+  - pymdownx.keys
+  - pymdownx.mark
+  # - pymdownx.snippets
+  - pymdownx.critic
+  # - pymdownx.details
+  # - pymdownx.blocks.caption
+  - pymdownx.tilde
+
+  - toc:
+      permalink: true
+  - pymdownx.highlight:
+      line_spans: __span
+  - pymdownx.superfences:
+      custom_fences:
+        - name: mermaid
+          class: mermaid
+          format: !!python/name:pymdownx.superfences.fence_code_format
+            # - pymdownx.tabbed:
+            #     alternate_style: true
+
+
+  - pymdownx.emoji:
+      emoji_index: !!python/name:material.extensions.emoji.twemoji
+      emoji_generator: !!python/name:material.extensions.emoji.to_svg

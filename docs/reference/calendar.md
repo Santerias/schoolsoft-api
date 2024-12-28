@@ -1,0 +1,3 @@
+# Calendar
+
+::: schoolsoft.calendar.Calendar
