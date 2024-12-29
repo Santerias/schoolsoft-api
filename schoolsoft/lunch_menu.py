@@ -1,4 +1,4 @@
-from .models import Lunch
+from .models import DayMenu, Lunch
 
 
 class LunchMenu:
@@ -7,7 +7,7 @@ class LunchMenu:
     def __init__(self, api):
         self.api = api
 
-    def get_menu(self, week: int) -> Lunch:
+    def get_menu(self, week: int) -> list[Lunch]:
         """Returns the lunch menu for the provided week
 
         Args:
@@ -16,4 +16,6 @@ class LunchMenu:
         Returns:
             Lunch: Lunch object
         """
-        return Lunch.from_dict(self.api._request("get", f"/lunchmenu/week/{week}"))
+        response = self.api._request("get", f"/lunchmenu/week/{week}")
+        day_menus = [DayMenu(**day) for day in response]
+        return Lunch(menu=day_menus)

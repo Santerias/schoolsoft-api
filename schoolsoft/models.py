@@ -1,20 +1,11 @@
-import re
-from dataclasses import dataclass
 from datetime import datetime
 
-
-def camel_to_snake(camel_case_str: str) -> str:
-    """Convert camelCase to snake_case"""
-    return re.sub(r"([a-z])([A-Z])", r"\1_\2", camel_case_str).lower()
-
-
-def snake_to_camel(snake_case_str: str) -> str:
-    """Convert snake_case to camelCase"""
-    words = snake_case_str.split("_")
-    return words[0] + "".join(word.capitalize() for word in words[1:])
+from pydantic import ConfigDict, Field
+from pydantic.alias_generators import to_camel
+from pydantic.dataclasses import dataclass
 
 
-def map_day_id_to_name(day_id: int) -> str:
+def _map_day_id_to_name(day_id: int) -> str:
     """Maps the day_id to a day to add to classes
 
     Args:
@@ -36,7 +27,7 @@ def map_day_id_to_name(day_id: int) -> str:
     return days[day_id % 7]
 
 
-@dataclass
+@dataclass(config=ConfigDict(alias_generator=to_camel))
 class StudentLessonStatus:
     """StudentLessonStatus
 
@@ -60,14 +51,8 @@ class StudentLessonStatus:
     name: str
     reason: str | None
 
-    @classmethod
-    def from_dict(cls, data: dict) -> "StudentLessonStatus":
-        """Creates a StudentLessonStatus instance from a dictionary."""
-        converted_data = {camel_to_snake(key): value for key, value in data.items()}
-        return cls(**converted_data)
 
-
-@dataclass
+@dataclass(config=ConfigDict(alias_generator=to_camel))
 class Lesson:
     """Lesson
 
@@ -116,27 +101,7 @@ class Lesson:
             day (str or None): Sets `day` to a str representing the day with help of `day_id` attribute in Lesson class
         """
         if self.day is None:
-            self.day = map_day_id_to_name(self.day_id)
-
-    @classmethod
-    def from_dict(cls, data: dict) -> "Lesson":
-        """Creates a Lesson instance from a dictionary."""
-        converted_data = {camel_to_snake(key): value for key, value in data.items()}
-
-        converted_data["start_date"] = datetime.fromisoformat(
-            converted_data["start_date"]
-        )
-        converted_data["end_date"] = datetime.fromisoformat(converted_data["end_date"])
-
-        if "day" not in converted_data:
-            converted_data["day"] = map_day_id_to_name(converted_data["day_id"])
-
-        if "student_lesson_status" in converted_data:
-            converted_data["student_lesson_status"] = StudentLessonStatus.from_dict(
-                converted_data["student_lesson_status"]
-            )
-
-        return cls(**converted_data)
+            self.day = _map_day_id_to_name(self.day_id)
 
 
 @dataclass
@@ -149,12 +114,7 @@ class Grade:
     """
 
     value: int
-    name: str
-
-    @classmethod
-    def from_dict(cls, data: dict) -> "Grade":
-        """Creates a Grade instance from a dictionary."""
-        return cls(value=data["value"], name=" ".join(data["text"].split()))
+    name: str = Field(alias="text")
 
 
 @dataclass
@@ -167,12 +127,7 @@ class Room:
     """
 
     value: int
-    name: str
-
-    @classmethod
-    def from_dict(cls, data: dict) -> "Room":
-        """Creates a Room instance from a dictionary."""
-        return cls(value=data["value"], name=" ".join(data["text"].split()))
+    name: str = Field(alias="text")
 
 
 @dataclass
@@ -185,15 +140,10 @@ class Teacher:
     """
 
     value: int
-    name: str
-
-    @classmethod
-    def from_dict(cls, data: dict) -> "Teacher":
-        """Creates a Teacher instance from a dictionary."""
-        return cls(value=data["value"], name=" ".join(data["text"].split()))
+    name: str = Field(alias="text")
 
 
-@dataclass
+@dataclass(config=ConfigDict(alias_generator=to_camel))
 class Store:
     """Store that contains all values for teachers, grades, and rooms for easier access
     that you could use later to get e.g. someones schedule/lessons
@@ -204,18 +154,9 @@ class Store:
         rooms (list[Room]): List of rooms
     """
 
-    teachers: list[Teacher]
-    grades: list[Grade]
-    rooms: list[Room]
-
-    @classmethod
-    def from_dict(cls, data: dict) -> "Store":
-        """Creates a Store instance from a dictionary."""
-        teachers = [Teacher.from_dict(item) for item in data["teacherItems"]]
-        grades = [Grade.from_dict(item) for item in data["classItems"]]
-        rooms = [Room.from_dict(item) for item in data["roomItems"]]
-
-        return cls(teachers=teachers, grades=grades, rooms=rooms)
+    teachers: list[Teacher] = Field(alias="teacherItems")
+    grades: list[Grade] = Field(alias="classItems")
+    rooms: list[Room] = Field(alias="roomItems")
 
 
 @dataclass
@@ -228,14 +169,10 @@ class Theme:
 
     theme: str
 
-    @classmethod
-    def from_dict(cls, data: dict) -> "Theme":
-        return cls(**data)
 
-
-@dataclass
+@dataclass(config=ConfigDict(alias_generator=to_camel))
 class CalendarSettings:
-    """Calendar settings
+    """CalendarSettings
 
     Args:
         user_type (str): Will usually always be `STUDENT`
@@ -255,16 +192,6 @@ class CalendarSettings:
     show_weekends: bool
     agenda_range: str
 
-    @classmethod
-    def from_dict(cls, data: dict) -> "CalendarSettings":
-        """Creates a Student instance from a dictionary."""
-        converted_data = {camel_to_snake(key): value for key, value in data.items()}
-        return cls(**converted_data)
-
-    @classmethod
-    def to_dict(cls, settings: "CalendarSettings") -> dict:
-        return {snake_to_camel(key): value for key, value in vars(settings).items()}
-
 
 @dataclass
 class Language:
@@ -275,12 +202,8 @@ class Language:
 
     language: str
 
-    @classmethod
-    def from_dict(cls, data: dict) -> "Language":
-        return cls(**data)
 
-
-@dataclass
+@dataclass(config=ConfigDict(alias_generator=to_camel))
 class Dish:
     """Dish
 
@@ -289,15 +212,11 @@ class Dish:
         dish (str): The name of the dish being served for lunch
     """
 
-    dishType: str
+    dish_type: str
     dish: str
 
-    @classmethod
-    def from_dict(cls, data: dict) -> "Dish":
-        return cls(**data)
 
-
-@dataclass
+@dataclass(config=ConfigDict(alias_generator=to_camel))
 class DayMenu:
     """DayMenu
 
@@ -306,15 +225,8 @@ class DayMenu:
         dishes (list[Dish]): List of dishes for the day
     """
 
-    dayId: int
+    day_id: int
     dishes: list[Dish]
-
-    @classmethod
-    def from_dict(cls, data: dict) -> "DayMenu":
-        return cls(
-            dayId=data["dayId"],
-            dishes=[Dish.from_dict(dish) for dish in data["dishes"]],
-        )
 
 
 @dataclass
@@ -325,14 +237,10 @@ class Lunch:
         menu (list[DayMenu]): Lunch menu
     """
 
-    menu: list[DayMenu]
-
-    @classmethod
-    def from_dict(cls, data: list) -> "Lunch":
-        return cls(menu=[DayMenu.from_dict(day) for day in data])
+    menu: list[DayMenu] = Field(default="")
 
 
-@dataclass
+@dataclass(config=ConfigDict(alias_generator=to_camel))
 class School:
     """School
 
@@ -343,19 +251,12 @@ class School:
     """
 
     org_id: int
-    name: str
-    grade: str
-
-    @classmethod
-    def from_dict(cls, data: dict) -> "School":
-        # could use more dynamic way to convert keys
-        return cls(
-            org_id=data["orgId"], name=data["schoolName"], grade=data["className"]
-        )
+    name: str = Field(alias="schoolName")
+    grade: str = Field(alias="className")
 
 
 # TODO: Change to Student
-@dataclass
+@dataclass(config=ConfigDict(alias_generator=to_camel))
 class User:
     """User
 
@@ -369,18 +270,7 @@ class User:
 
     first_name: str
     last_name: str
-    profile_picture: str
     unread_messages: int
     active: bool
+    profile_picture: str = Field(alias="pictureURL")
     # schools: list[School]
-
-    @classmethod
-    def from_dict(cls, data: list) -> "User":
-        converted_data = {camel_to_snake(key): value for key, value in data.items()}
-        return cls(
-            first_name=converted_data["first_name"],
-            last_name=converted_data["last_name"],
-            profile_picture=converted_data["picture_url"],
-            unread_messages=converted_data["unread_messages"],
-            active=converted_data["active"],
-        )

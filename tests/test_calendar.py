@@ -1,3 +1,5 @@
+from dataclasses import asdict
+
 import pytest
 
 from schoolsoft import Calendar
@@ -131,7 +133,23 @@ def test_update_settings(calendar):
     result.mode = "month"
     result.show_weekends = True
 
-    mock_update_response = result.to_dict(result)
+    mock_update_response = {
+        "userType": "STUDENT",
+        "userId": 12345,
+        "app": False,
+        "mode": "month",
+        "categories": [
+            "lesson",
+            "calendarEvent",
+            "privateEvent",
+            "schoolCalendarEvent",
+            "timeBooking",
+            "planning",
+            "test",
+        ],
+        "showWeekends": True,
+        "agendaRange": "month",
+    }
     calendar.api._request.return_value = mock_update_response
 
     updated_result = calendar.update_settings(result)
@@ -139,29 +157,6 @@ def test_update_settings(calendar):
     assert isinstance(updated_result, CalendarSettings)
     assert updated_result.mode == "month"
     assert updated_result.show_weekends is True
-
-    # Test with dict
-    calendar.api._request.return_value = mock_response
-    result = calendar.get_settings()
-
-    assert isinstance(result, CalendarSettings)
-    assert result.user_type == "STUDENT"
-    assert result.user_id == 12345
-
-    dct = result.to_dict(result)
-    dct["mode"] = "month"
-    dct["showWeekends"] = True
-
-    assert isinstance(dct, dict)
-    assert dct["mode"] == "month"
-    assert dct["showWeekends"] is True
-
-    calendar.api._request.return_value = dct
-    updated_dct = calendar.update_settings(dct)
-
-    assert isinstance(updated_dct, CalendarSettings)
-    assert updated_dct.mode == "month"
-    assert updated_dct.show_weekends is True
 
 
 def test_get_store(calendar):

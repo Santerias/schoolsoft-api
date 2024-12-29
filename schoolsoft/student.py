@@ -6,11 +6,11 @@ class Student:
         self.api = api
 
     def get_student(self) -> User:
-        return User.from_dict(self.api._request("get", "/student/header/student"))
+        return User(**self.api._request("get", "/student/header/student"))
 
     def get_schools(self) -> list[School]:
         return [
-            School.from_dict(school)
+            School(**school)
             for school in self.api._request("get", "/student/header/schools")
         ]
 

@@ -63,8 +63,8 @@ def test_get_menu_success(lunch_menu):
 
     assert isinstance(result, Lunch)
     assert len(result.menu) == 5
-    assert result.menu[0].dayId == 1
-    assert result.menu[0].dishes[0].dishType == "Dagens Lunch"
+    assert result.menu[0].day_id == 1
+    assert result.menu[0].dishes[0].dish_type == "Dagens Lunch"
     assert (
         result.menu[0].dishes[0].dish
         == "Kycklinggryta med kokos, röd curry och lime serveras med ris.\r\nGrönsaksgryta med kokos, röd curry och lime serveras med ris."
