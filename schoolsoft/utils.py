@@ -4,14 +4,41 @@ from .models import Lesson, Theme
 
 
 def is_dark(theme: Theme) -> bool:
+    """Checks if the provided Theme object is dark or not
+
+    Args:
+        theme (Theme): Theme object
+
+    Returns:
+        bool: True if the theme is dark, otherwise False
+    """
+
     return True if theme.theme.lower() == "dark" else False
 
 
 def is_light(theme: Theme) -> bool:
+    """Checks if the provided Theme object is light or not
+
+    Args:
+        theme (Theme): Theme object
+
+    Returns:
+        bool: True if the theme is light, otherwise False
+    """
+
     return True if theme.theme.lower() == "light" else False
 
 
 def get_previous_lesson(lessons: list[Lesson]) -> Lesson | None:
+    """Gets the lesson you had previously, could even date back to a couple of months in-case it's a holiday
+
+    Args:
+        lessons (list[Lesson]): Takes a list of lessons
+
+    Returns:
+        (Lesson or None): If successfully found the previous lesson it will return a Lesson object otherwise it'll just return None
+    """
+
     lessons.sort(key=lambda lesson: lesson.start_date, reverse=True)
     for lesson in lessons:
         if lesson.end_date < datetime.now():
@@ -21,6 +48,14 @@ def get_previous_lesson(lessons: list[Lesson]) -> Lesson | None:
 
 
 def get_current_lesson(lessons: list[Lesson]) -> Lesson | None:
+    """Gets the current lesson you're attending
+
+    Args:
+        lessons (list[Lesson]): Takes a list of lessons
+
+    Returns:
+        (Lesson or None): If successfully found the current lesson it will return a Lesson object otherwise it'll just return None
+    """
     for lesson in lessons:
         if lesson.start_date <= datetime.now() <= lesson.end_date:
             return lesson
@@ -29,6 +64,15 @@ def get_current_lesson(lessons: list[Lesson]) -> Lesson | None:
 
 
 def get_next_lesson(lessons: list[Lesson]) -> Lesson | None:
+    """Gets the next lesson
+
+    Args:
+        lessons (list[Lesson]): Takes a list of lessons
+
+    Returns:
+        (Lesson or None): If successfully found the next lesson it will return a Lesson object otherwise it'll just return None
+    """
+
     lessons.sort(key=lambda lesson: lesson.start_date)
     for lesson in lessons:
         if lesson.start_date > datetime.now():
@@ -38,6 +82,15 @@ def get_next_lesson(lessons: list[Lesson]) -> Lesson | None:
 
 
 def get_todays_lessons(lessons: list[Lesson]) -> list[Lesson]:
+    """Gets all lessons for the day and returns them in a list
+
+    Args:
+        lessons (list[Lesson]): Takes a list of lessons
+
+    Returns:
+        (list[Lesson]): Gets returned in order of start_date, meaning the first lesson of the day is at the start of the list (first index)
+    """
+
     todays_lessons = [
         lesson
         for lesson in lessons
@@ -65,6 +118,16 @@ def get_todays_lessons(lessons: list[Lesson]) -> list[Lesson]:
 
 
 def get_lessons_by_id(lessons: list[Lesson], lesson_id: int) -> list[Lesson]:
+    """Goes through a list of lessons objects and returns the lesson with the lesson_id provided
+
+    Args:
+        lessons (list[Lesson]): Takes a list of lessons to search through
+        lesson_id (int): Takes a lesson_id that the function will look for (event_id is the same as lesson_id)
+
+    Returns:
+        (list[Lesson]): Sorts the list with the start_date of the lessons and returns it
+    """
+
     lessons.sort(key=lambda lesson: lesson.start_date)
     results = []
 
@@ -76,6 +139,16 @@ def get_lessons_by_id(lessons: list[Lesson], lesson_id: int) -> list[Lesson]:
 
 
 def get_lessons_by_name(lessons: list[Lesson], lesson_name: str) -> list[Lesson]:
+    """Goes through a list of lessons objects and returns the lesson with the lesson_name provided
+
+    Args:
+        lessons (list[Lesson]): Takes a list of lessons to search through
+        lesson_name (str): Takes a lesson_name that the function will look for
+
+    Returns:
+        (list[Lesson]): Sorts the list with the start_date of the lessons and returns it
+    """
+
     lessons.sort(key=lambda lesson: lesson.start_date)
     results = []
 
@@ -99,6 +172,17 @@ def get_lessons_by_name(lessons: list[Lesson], lesson_name: str) -> list[Lesson]
 
 
 def get_weekly_schedule(lessons: list[Lesson], week: int = None) -> list[list[Lesson]]:
+    """Gets your entire weekly schedule and sorts the list accordingly, works the same way as `get_todays_lessons`
+    but gets the entire week lessons
+
+    Args:
+        lessons (list[Lesson]): Takes a list of lesson objects
+        week (int): Takes a week number to sort the lessons via
+
+    Returns:
+        (list[list[Lesson]]): Returns a list with 7 entries containing the days of the week and each list has its day lessons
+    """
+
     now = datetime.now()
 
     if week is not None:

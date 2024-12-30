@@ -197,7 +197,8 @@ class CalendarSettings:
 class Language:
     """Language object
 
-    language (str): Language currently being used, can be `SV` or `EN`
+    Args:
+        language (str): Language currently being used, can be `SV` or `EN`
     """
 
     language: str
@@ -208,7 +209,7 @@ class Dish:
     """Dish
 
     Args:
-        dishType (str): Usually set to `Dagens Lunch`
+        dish_type (str): Usually set to `Dagens Lunch`
         dish (str): The name of the dish being served for lunch
     """
 
@@ -221,7 +222,7 @@ class DayMenu:
     """DayMenu
 
     Args:
-        dayId (int): The day the day menu belongs to e.g. 0 means Monday
+        day_id (int): The day the day menu belongs to e.g. 0 means Monday
         dishes (list[Dish]): List of dishes for the day
     """
 
