@@ -80,8 +80,6 @@ theme:
 
 plugins:
   - search
-  - git-authors:
-      enabled: true
   - git-revision-date-localized:
       type: date
       fallback_to_build_date: false
