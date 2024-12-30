@@ -108,11 +108,11 @@ class Api:
         """Private method to make requests to the SchoolSoft REST API.
 
         Args:
-            method (str): HTTP method to use.
+            method (str): HTTP method to use (e.g. `GET`, `POST`).
             endpoint (str): Endpoint to request.
-            data (bool, optional): Data to send to the specified endpoint.
-            json (bool, optional): JSON data to send to the specified endpoint.
-            status (bool, optional): If True, returns entire response instead of just json data.
+            data (optional): Data to send to the specified endpoint. Default is `None`
+            json (optional): JSON data to send to the specified endpoint. Default is `None`
+            status (optional, bool): If True, returns entire response instead of just json data. Default is `False`
 
         Raises:
             ValueError: Gets raised if an unsupported HTTP method is provided.
