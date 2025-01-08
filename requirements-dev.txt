@@ -43,7 +43,8 @@ PyYAML==6.0.2
 pyyaml_env_tag==0.1
 regex==2024.11.6
 requests==2.32.3
--e git+https://github.com/Santerias/schoolsoft-api@3546f9d217f678e5c92b2837f0f41a93f0718fd5#egg=schoolsoft
+ruff==0.8.6
+-e git+https://github.com/Santerias/schoolsoft-api@2f0ff9e1c72af0b356873c2f1feb07a6ddfd937b#egg=schoolsoft
 six==1.17.0
 smmap==5.0.2
 soupsieve==2.6
