@@ -1,8 +1,12 @@
+annotated-types==0.7.0
 beautifulsoup4==4.12.3
-certifi==2024.8.30
-charset-normalizer==3.4.0
+certifi==2024.12.14
+charset-normalizer==3.4.1
 idna==3.10
-python-dotenv==1.0.1
+pydantic==2.10.4
+pydantic_core==2.27.2
 requests==2.32.3
+-e git+https://github.com/Santerias/schoolsoft-api@c6e52daebf7dbc84283c8300c04947043895daee#egg=schoolsoft
 soupsieve==2.6
-urllib3==2.2.3
+typing_extensions==4.12.2
+urllib3==2.3.0
