@@ -6,7 +6,6 @@ idna==3.10
 pydantic==2.10.4
 pydantic_core==2.27.2
 requests==2.32.3
--e git+https://github.com/Santerias/schoolsoft-api@c6e52daebf7dbc84283c8300c04947043895daee#egg=schoolsoft
 soupsieve==2.6
 typing_extensions==4.12.2
 urllib3==2.3.0
